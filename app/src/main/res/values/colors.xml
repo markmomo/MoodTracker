@@ -3,4 +3,22 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
+
+    <!-- Colors used by HistoryActivity as background colors -->
+    <color name="noMoodsGrey">#C0C0C0</color>
+    <color name="faded_red">#ffde3c50</color>
+    <color name="warm_grey">#ff9b9b9b</color>
+    <color name="cornflower_blue_65">#A5468AD9</color>
+    <color name="light_sage">#ffb8e986</color>
+    <color name="banana_yellow">#fff9ec4f</color>
+
+    <!-- Colors used by ViewPager as background colors -->
+    <array name="viewPagerColors">
+        <item>#ffde3c50</item>
+        <item>#ff9b9b9b</item>
+        <item>#A5468AD9</item>
+        <item>#ffb8e986</item>
+        <item>#fff9ec4f</item>
+    </array>
+
 </resources>
