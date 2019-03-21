@@ -28,10 +28,15 @@ import markmomo.com.moodtracker.tools.AlarmReceiver;
 import markmomo.com.moodtracker.tools.SmileysAdapter;
 
 import static markmomo.com.moodtracker.models.UserMoods.CURRENT_MOOD;
+import static markmomo.com.moodtracker.models.UserMoods.MOODS;
 import static markmomo.com.moodtracker.models.UserNotes.CURRENT_NOTES;
+import static markmomo.com.moodtracker.models.UserNotes.NOTES;
+import static markmomo.com.moodtracker.tools.AlarmReceiver.DAY_COUNTER;
 
 
 public class MainActivity extends AppCompatActivity {
+
+    SharedPreferences mPrefs;
 
     UserMoods mUserMoods;
     UserNotes mUserNotes;
@@ -54,6 +59,9 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        mPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+
         mNoteIcon = findViewById(R.id.act_main_note_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
         mUserMoods = new UserMoods(this);
@@ -62,25 +70,22 @@ public class MainActivity extends AppCompatActivity {
 
         configureViewPager();
         startAlarm ();
-        listeningViewPager();
-        mUserMoods.trackMoodsData();
-        mUserNotes.trackNotesData();
     }
 
     @Override
-    protected void onStop() {
-        super.onStop();
+    protected void onPause() {
+        super.onPause();
 
-        mUserMoods.trackMoodsData();
-        mUserNotes.trackNotesData();
+        mPrefs.edit().putString(CURRENT_MOOD,mPager.getCurrentItem()+"").apply();
+        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mUserMoods.trackMoodsData();
-        mUserNotes.trackNotesData();
+        this.listeningViewPager();
+        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
     }
 
     private void configureViewPager(){
@@ -90,6 +95,13 @@ public class MainActivity extends AppCompatActivity {
         SmileysAdapter smileysAdapter;
         smileysAdapter = new SmileysAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
         mPager.setAdapter(smileysAdapter);
+
+        if (mPrefs.getString(CURRENT_MOOD,"no mood").equals("no mood")){
+            mPager.setCurrentItem(3);
+            mPrefs.edit().putString(CURRENT_MOOD,"3").apply();
+        } else {
+            mPager.setCurrentItem(Integer.parseInt(mPrefs.getString(CURRENT_MOOD,"3")));
+        }
 
         mNoteIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
         mHistoryIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
@@ -125,11 +137,11 @@ public class MainActivity extends AppCompatActivity {
             }
             @Override
             public void onPageSelected(int position) {
-                SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-                prefs.edit().putInt(CURRENT_MOOD, mPager.getCurrentItem()).apply();
 
-                mUserMoods.trackMoodsData();
-                mUserNotes.trackNotesData();
+                mPrefs.edit().putString(CURRENT_MOOD, mPager.getCurrentItem()+"").apply();
+                mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+
+                System.out.println(mPrefs.getString(MOODS,"no mood"));
                 System.out.println(mUserMoods.getMoods());
 
             }
@@ -149,18 +161,20 @@ public class MainActivity extends AppCompatActivity {
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
                 mNoteBox.setText(null);
+                System.out.println(mPrefs.getString(NOTES,"no note"));
                 System.out.println(mUserNotes.getNotes());
             }
         });
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-                prefs.edit().putString(CURRENT_NOTES, mNoteBox.getText().toString()).apply();
 
-                mUserMoods.trackMoodsData();
-                mUserNotes.trackNotesData();
+                mPrefs.edit().putString(CURRENT_NOTES, mNoteBox.getText().toString()).apply();
+                mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+
                 mNoteBox.setText(null);
+                System.out.println(mPrefs.getString(NOTES,"no note"));
                 System.out.println(mUserNotes.getNotes());
+
             }
         });
         alert.setCancelable(false);
