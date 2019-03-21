@@ -10,6 +10,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import static markmomo.com.moodtracker.models.UserMoods.DAY_COUNTER_MOODS;
+import static markmomo.com.moodtracker.models.UserNotes.DAY_COUNTER_NOTES;
 
 
 /**
@@ -26,6 +27,7 @@ public class AlarmReceiver extends BroadcastReceiver {
         prefs = context.getSharedPreferences("myPrefs",Context.MODE_PRIVATE);
 
         prefs.edit().putInt(DAY_COUNTER_MOODS, prefs.getInt(DAY_COUNTER_MOODS ,0)+1).apply();
+        prefs.edit().putInt(DAY_COUNTER_NOTES, prefs.getInt(DAY_COUNTER_NOTES ,0)+1).apply();
 
         Toast.makeText(context,"dayCounter = "+prefs.getInt(DAY_COUNTER_MOODS,0),Toast.LENGTH_SHORT).show();
         Log.e("TAG", "onReceive: onReceive: onReceive: onReceive: onReceive: onReceive: onReceive: ");

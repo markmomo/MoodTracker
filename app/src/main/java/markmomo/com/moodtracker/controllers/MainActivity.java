@@ -4,6 +4,7 @@ import android.app.AlarmManager;
 import android.app.PendingIntent;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 
@@ -11,30 +12,41 @@ import android.os.SystemClock;
 import android.os.Bundle;
 
 import android.support.v4.view.ViewPager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import java.util.Calendar;
 
 import markmomo.com.moodtracker.R;
 import markmomo.com.moodtracker.models.UserMoods;
+import markmomo.com.moodtracker.models.UserNotes;
 import markmomo.com.moodtracker.tools.AlarmReceiver;
 import markmomo.com.moodtracker.tools.SmileysAdapter;
 
 import static markmomo.com.moodtracker.models.UserMoods.CURRENT_MOOD;
+import static markmomo.com.moodtracker.models.UserNotes.CURRENT_NOTES;
 
 
 public class MainActivity extends AppCompatActivity {
 
     UserMoods mUserMoods;
+    UserNotes mUserNotes;
     ImageButton mNoteIcon,mHistoryIcon;
     ViewPager mPager;
+    EditText mNoteBox;
 
 
     public void historyIconIsClicked (View view){
         Intent intent = new Intent(MainActivity.this,HistoryActivity.class);
         startActivity(intent);
+    }
+
+    public void noteIconIsClicked (View view) {
+        displayNoteBox();
     }
 
     @Override
@@ -45,30 +57,30 @@ public class MainActivity extends AppCompatActivity {
         mNoteIcon = findViewById(R.id.act_main_note_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
         mUserMoods = new UserMoods(this);
+        mUserNotes = new UserNotes(this);
+        mNoteBox = new EditText(this);
 
-        mUserMoods.loadMoodsData();
         configureViewPager();
         startAlarm ();
         listeningViewPager();
+        mUserMoods.trackMoodsData();
+        mUserNotes.trackNotesData();
     }
-
 
     @Override
     protected void onStop() {
         super.onStop();
 
-        mUserMoods.updateMoodsData();
-        mUserMoods.saveMoodsData();
-        mUserMoods.loadMoodsData();
+        mUserMoods.trackMoodsData();
+        mUserNotes.trackNotesData();
     }
 
     @Override
     protected void onStart() {
         super.onStart();
 
-        mUserMoods.updateMoodsData();
-        mUserMoods.saveMoodsData();
-        mUserMoods.loadMoodsData();
+        mUserMoods.trackMoodsData();
+        mUserNotes.trackNotesData();
     }
 
     private void configureViewPager(){
@@ -82,6 +94,7 @@ public class MainActivity extends AppCompatActivity {
         mNoteIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
         mHistoryIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
     }
+
     private void startAlarm (){
 
         AlarmManager alarmMgr;
@@ -115,9 +128,8 @@ public class MainActivity extends AppCompatActivity {
                 SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
                 prefs.edit().putInt(CURRENT_MOOD, mPager.getCurrentItem()).apply();
 
-                mUserMoods.updateMoodsData();
-                mUserMoods.saveMoodsData();
-                mUserMoods.loadMoodsData();
+                mUserMoods.trackMoodsData();
+                mUserNotes.trackNotesData();
                 System.out.println(mUserMoods.getMoods());
 
             }
@@ -127,4 +139,35 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void displayNoteBox(){
+        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+        alert.setMessage("Cancel to keep last note\nOk to delete last note");
+        alert.setTitle("Note");
+        alert.setView(mNoteBox);
+
+        alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                mNoteBox.setText(null);
+                System.out.println(mUserNotes.getNotes());
+            }
+        });
+        alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
+            public void onClick(DialogInterface dialog, int whichButton) {
+                SharedPreferences prefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
+                prefs.edit().putString(CURRENT_NOTES, mNoteBox.getText().toString()).apply();
+
+                mUserMoods.trackMoodsData();
+                mUserNotes.trackNotesData();
+                mNoteBox.setText(null);
+                System.out.println(mUserNotes.getNotes());
+            }
+        });
+        alert.setCancelable(false);
+        alert.create();
+        if(mNoteBox.getParent() != null) {
+            ((ViewGroup)mNoteBox.getParent()).removeView(mNoteBox); // <- fix
+        }
+        alert.show();
+    }
 }

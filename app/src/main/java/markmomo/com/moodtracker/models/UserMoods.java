@@ -29,7 +29,7 @@ public class UserMoods {
         return mMoods;
     }
 
-    public void updateMoodsData(){
+    private void updateMoodsData(){
         SharedPreferences prefs = mContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
 
         //initialize mMoods if empty
@@ -40,6 +40,7 @@ public class UserMoods {
                 mMoods.add("-1");
             }
         }
+
         //keep mMoods ArrayList size to 8 items
         while (mMoods.size() > 8){
             mMoods.remove(mMoods.size()-1);
@@ -59,7 +60,7 @@ public class UserMoods {
         }
     }
 
-    public void saveMoodsData() {
+    private void saveMoodsData() {
         SharedPreferences prefs = mContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
 
         StringBuilder moodsString = new StringBuilder();
@@ -72,11 +73,18 @@ public class UserMoods {
         prefs.edit().putString(MOODS, moodsString.toString()).apply();
     }
 
-    public void loadMoodsData() {
+    private void loadMoodsData() {
         SharedPreferences prefs = mContext.getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
 
-        String moods = prefs.getString("MOODS", null);
+        String moods = prefs.getString(MOODS, "-1");
 
         mMoods = new ArrayList<>(Arrays.asList(moods.split(",")));
+    }
+
+    public void trackMoodsData(){
+
+        updateMoodsData();
+        saveMoodsData();
+        loadMoodsData();
     }
 }
