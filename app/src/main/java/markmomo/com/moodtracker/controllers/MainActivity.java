@@ -33,7 +33,6 @@ import static markmomo.com.moodtracker.models.UserNotes.CURRENT_NOTES;
 import static markmomo.com.moodtracker.models.UserNotes.NOTES;
 import static markmomo.com.moodtracker.tools.AlarmReceiver.DAY_COUNTER;
 
-
 public class MainActivity extends AppCompatActivity {
 
     SharedPreferences mPrefs;
@@ -44,14 +43,16 @@ public class MainActivity extends AppCompatActivity {
     ViewPager mPager;
     EditText mNoteBox;
 
-
     public void historyIconIsClicked (View view){
         Intent intent = new Intent(MainActivity.this,HistoryActivity.class);
+
+        intent.putStringArrayListExtra("mMoods history",mUserMoods.getMoods());
+        intent.putStringArrayListExtra("mNotes history", mUserNotes.getNotes());
         startActivity(intent);
     }
 
     public void noteIconIsClicked (View view) {
-        displayNoteBox();
+        this.displayNoteBox();
     }
 
     @Override
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         mPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+        this.initializePrefs();
 
         mNoteIcon = findViewById(R.id.act_main_note_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
@@ -68,8 +69,7 @@ public class MainActivity extends AppCompatActivity {
         mUserNotes = new UserNotes(this);
         mNoteBox = new EditText(this);
 
-        configureViewPager();
-        startAlarm ();
+        this.startAlarm ();
     }
 
     @Override
@@ -83,7 +83,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-
+        this.configureViewPager();
         this.listeningViewPager();
         mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
     }
@@ -92,16 +92,14 @@ public class MainActivity extends AppCompatActivity {
 
         mPager = findViewById(R.id.act_main_view_pager);
 
-        SmileysAdapter smileysAdapter;
-        smileysAdapter = new SmileysAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
+        SmileysAdapter smileysAdapter = new SmileysAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
         mPager.setAdapter(smileysAdapter);
 
-        if (mPrefs.getString(CURRENT_MOOD,"no mood").equals("no mood")){
+        if (mPrefs.getString(CURRENT_MOOD,"-1").equals("-1")){
             mPager.setCurrentItem(3);
             mPrefs.edit().putString(CURRENT_MOOD,"3").apply();
-        } else {
+        } else
             mPager.setCurrentItem(Integer.parseInt(mPrefs.getString(CURRENT_MOOD,"3")));
-        }
 
         mNoteIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
         mHistoryIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
@@ -141,7 +139,7 @@ public class MainActivity extends AppCompatActivity {
                 mPrefs.edit().putString(CURRENT_MOOD, mPager.getCurrentItem()+"").apply();
                 mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
 
-                System.out.println(mPrefs.getString(MOODS,"no mood"));
+                System.out.println(mPrefs.getString(MOODS,"-1"));
                 System.out.println(mUserMoods.getMoods());
 
             }
@@ -179,9 +177,16 @@ public class MainActivity extends AppCompatActivity {
         });
         alert.setCancelable(false);
         alert.create();
-        if(mNoteBox.getParent() != null) {
+        if(mNoteBox.getParent() != null)
             ((ViewGroup)mNoteBox.getParent()).removeView(mNoteBox); // <- fix
-        }
         alert.show();
+    }
+
+    private void initializePrefs(){
+        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+        if (mPrefs.getString(MOODS,null) == null)
+            mPrefs.edit().putString(MOODS,"-1,-1,-1,-1,-1,-1,-1").apply();
+        if (mPrefs.getString(NOTES,null) == null)
+            mPrefs.edit().putString(NOTES,"no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note").apply();
     }
 }

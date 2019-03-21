@@ -41,15 +41,15 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         if (mPrefs.getInt(DAY_COUNTER,0) > 1){
 
-            mPrefs.edit().putString(MOODS,"no mood"+ "," + mPrefs.getString(MOODS,"no mood")).apply();
-            mPrefs.edit().putString(CURRENT_MOOD,"no mood").apply();
-            System.out.println(mPrefs.getString(MOODS,"no mood"));
+            mPrefs.edit().putString(MOODS,"-1"+ "," + mPrefs.getString(MOODS,"-1")).apply();
+            mPrefs.edit().putString(CURRENT_MOOD,"-1").apply();
+            System.out.println(mPrefs.getString(MOODS,"-1"));
 
         } else if (mPrefs.getInt(DAY_COUNTER,0) == 1)  {
 
-            mPrefs.edit().putString(MOODS, mPrefs.getString(CURRENT_MOOD,"no mood") + "," + mPrefs.getString(MOODS,"no mood")).apply();
-            mPrefs.edit().putString(CURRENT_MOOD,"no mood").apply();
-            System.out.println(mPrefs.getString(MOODS,"no mood"));
+            mPrefs.edit().putString(MOODS, mPrefs.getString(CURRENT_MOOD,"-1") + "," + mPrefs.getString(MOODS,"-1")).apply();
+            mPrefs.edit().putString(CURRENT_MOOD,"-1").apply();
+            System.out.println(mPrefs.getString(MOODS,"-1"));
         }
     }
 

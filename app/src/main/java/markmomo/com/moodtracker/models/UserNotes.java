@@ -31,6 +31,7 @@ public class UserNotes {
         ArrayList<String> mNotes;
         String moods = prefs.getString(NOTES, "no note");
         mNotes = new ArrayList<>(Arrays.asList(moods.split(",;,;;,;;")));
+
         return mNotes;
     }
 }

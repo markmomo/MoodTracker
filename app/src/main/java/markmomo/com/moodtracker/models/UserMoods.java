@@ -29,8 +29,9 @@ public class UserMoods {
         SharedPreferences prefs;
         prefs = mContext.getSharedPreferences("myPrefs", MODE_PRIVATE);
         ArrayList<String> mMoods;
-        String moods = prefs.getString(MOODS, "no mood");
+        String moods = prefs.getString(MOODS, "-1");
         mMoods = new ArrayList<>(Arrays.asList(moods.split(",")));
+
         return mMoods;
     }
 }
