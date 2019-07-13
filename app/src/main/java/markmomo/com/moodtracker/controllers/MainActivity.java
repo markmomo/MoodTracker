@@ -2,111 +2,126 @@ package markmomo.com.moodtracker.controllers;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
-
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.SharedPreferences;
-
-import android.os.SystemClock;
 import android.os.Bundle;
-
+import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.ImageButton;
+
 import java.util.Calendar;
 
 import markmomo.com.moodtracker.R;
-import markmomo.com.moodtracker.models.UserMoods;
-import markmomo.com.moodtracker.models.UserNotes;
 import markmomo.com.moodtracker.tools.AlarmReceiver;
-import markmomo.com.moodtracker.tools.SmileysAdapter;
+import markmomo.com.moodtracker.tools.MoodsAdapter;
 
-import static markmomo.com.moodtracker.models.UserMoods.CURRENT_MOOD;
-import static markmomo.com.moodtracker.models.UserMoods.MOODS;
-import static markmomo.com.moodtracker.models.UserNotes.CURRENT_NOTES;
-import static markmomo.com.moodtracker.models.UserNotes.NOTES;
-import static markmomo.com.moodtracker.tools.AlarmReceiver.DAY_COUNTER;
+import static markmomo.com.moodtracker.models.Preferences.getCurrentMoodFromPrefs;
+import static markmomo.com.moodtracker.models.Preferences.initializePrefs;
+import static markmomo.com.moodtracker.models.Preferences.printPrefsData;
+import static markmomo.com.moodtracker.models.Preferences.putAppStatusOnPrefs;
+import static markmomo.com.moodtracker.models.Preferences.putCurrentMoodOnPrefs;
+import static markmomo.com.moodtracker.models.Preferences.putCurrentNoteOnPrefs;
+import static markmomo.com.moodtracker.models.Preferences.putDayCounterOnPrefs;
+import static markmomo.com.moodtracker.models.Preferences.updateMoodsAndNotesPrefs;
 
 public class MainActivity extends AppCompatActivity {
 
-    SharedPreferences mPrefs;
+    private ImageButton mNoteIcon,mHistoryIcon;
+    private ViewPager mViewPager;
 
-    UserMoods mUserMoods;
-    UserNotes mUserNotes;
-    ImageButton mNoteIcon,mHistoryIcon;
-    ViewPager mPager;
-    EditText mNoteBox;
-
-    public void historyIconIsClicked (View view){
-        Intent intent = new Intent(MainActivity.this,HistoryActivity.class);
-
-        intent.putStringArrayListExtra("mMoods history",mUserMoods.getMoods());
-        intent.putStringArrayListExtra("mNotes history", mUserNotes.getNotes());
-        startActivity(intent);
-    }
-
-    public void noteIconIsClicked (View view) {
-        this.displayNoteBox();
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mPrefs = getSharedPreferences("myPrefs", Context.MODE_PRIVATE);
-        this.initializePrefs();
-
         mNoteIcon = findViewById(R.id.act_main_note_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
-        mUserMoods = new UserMoods(this);
-        mUserNotes = new UserNotes(this);
-        mNoteBox = new EditText(this);
 
-        this.startAlarm ();
+        initializePrefs(this);
+        this.configureViewPager();
+        this.displayStartScreen();
+        this.listeningViewPager();
+        this.startAlarm();
+        printPrefsData(this);
     }
 
     @Override
     protected void onPause() {
         super.onPause();
 
-        mPrefs.edit().putString(CURRENT_MOOD,mPager.getCurrentItem()+"").apply();
-        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+        putCurrentMoodOnPrefs(this,mViewPager.getCurrentItem()+"");
+        updateMoodsAndNotesPrefs(this);
+        printPrefsData(this);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
+
+        putAppStatusOnPrefs(this,"inactive");
         this.configureViewPager();
+        this.displayStartScreen();
         this.listeningViewPager();
-        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
+        updateMoodsAndNotesPrefs(this);
+        printPrefsData(this);
+    }
+
+    public void historyIconIsClicked (View view){
+
+        Intent intent = new Intent(MainActivity.this,HistoryActivity.class);
+        startActivity(intent);
+        printPrefsData(this);
+    }
+
+    public void noteIconIsClicked (View view) {
+        displayNoteBox(this);
     }
 
     private void configureViewPager(){
+        mViewPager = findViewById(R.id.act_main_view_pager);
+        MoodsAdapter moodsAdapter = new MoodsAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
 
-        mPager = findViewById(R.id.act_main_view_pager);
+        mViewPager.setAdapter(moodsAdapter);
 
-        SmileysAdapter smileysAdapter = new SmileysAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
-        mPager.setAdapter(smileysAdapter);
+        mNoteIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
+        mHistoryIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
+    }
 
-        if (mPrefs.getString(CURRENT_MOOD,"-1").equals("-1")){
-            mPager.setCurrentItem(3);
-            mPrefs.edit().putString(CURRENT_MOOD,"3").apply();
+    private void displayStartScreen (){
+
+        if (getCurrentMoodFromPrefs(this).equals("5")){
+            mViewPager.setCurrentItem(3);
+            putCurrentMoodOnPrefs(this, "3");
         } else
-            mPager.setCurrentItem(Integer.parseInt(mPrefs.getString(CURRENT_MOOD,"3")));
+            mViewPager.setCurrentItem(Integer.parseInt(getCurrentMoodFromPrefs(this)));
+    }
 
-        mNoteIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
-        mHistoryIcon.setBackgroundColor(smileysAdapter.mainActivityIconsColors);
+    private void listeningViewPager(){
+        mViewPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            @Override
+            public void onPageScrolled(int i, float v, int i1) {
+            }
+            @Override
+            public void onPageSelected(int position) {
+
+                putCurrentMoodOnPrefs(getApplicationContext(),mViewPager.getCurrentItem()+"");
+                updateMoodsAndNotesPrefs(getApplicationContext());
+                printPrefsData(getApplicationContext());
+            }
+            @Override
+            public void onPageScrollStateChanged(int i) {
+            }
+        });
     }
 
     private void startAlarm (){
-
         AlarmManager alarmMgr;
         PendingIntent alarmIntent;
 
@@ -126,67 +141,33 @@ public class MainActivity extends AppCompatActivity {
                 SystemClock.elapsedRealtime() + AlarmManager.INTERVAL_FIFTEEN_MINUTES/15,
                 AlarmManager.INTERVAL_FIFTEEN_MINUTES/15, alarmIntent);
     }
-
-    private void listeningViewPager(){
-
-        mPager.addOnPageChangeListener(new ViewPager.OnPageChangeListener() {
-            @Override
-            public void onPageScrolled(int i, float v, int i1) {
-            }
-            @Override
-            public void onPageSelected(int position) {
-
-                mPrefs.edit().putString(CURRENT_MOOD, mPager.getCurrentItem()+"").apply();
-                mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
-
-                System.out.println(mPrefs.getString(MOODS,"-1"));
-                System.out.println(mUserMoods.getMoods());
-
-            }
-            @Override
-            public void onPageScrollStateChanged(int i) {
-            }
-        });
-    }
-
-    private void displayNoteBox(){
-        AlertDialog.Builder alert = new AlertDialog.Builder(this);
+    public static void displayNoteBox(final Context context){
+        final EditText noteBox = new EditText(context);
+        AlertDialog.Builder alert = new AlertDialog.Builder(context);
 
         alert.setMessage("Cancel to keep last note\nOk to delete last note");
         alert.setTitle("Note");
-        alert.setView(mNoteBox);
+        alert.setView(noteBox);
 
         alert.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
-                mNoteBox.setText(null);
-                System.out.println(mPrefs.getString(NOTES,"no note"));
-                System.out.println(mUserNotes.getNotes());
+                noteBox.setText(null);
+                printPrefsData(context);
             }
         });
         alert.setPositiveButton("Ok", new DialogInterface.OnClickListener() {
             public void onClick(DialogInterface dialog, int whichButton) {
 
-                mPrefs.edit().putString(CURRENT_NOTES, mNoteBox.getText().toString()).apply();
-                mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
-
-                mNoteBox.setText(null);
-                System.out.println(mPrefs.getString(NOTES,"no note"));
-                System.out.println(mUserNotes.getNotes());
-
+                putCurrentNoteOnPrefs(context, noteBox.getText().toString());
+                putDayCounterOnPrefs(context,0);
+                noteBox.setText(null);
+                printPrefsData(context);
             }
         });
         alert.setCancelable(false);
         alert.create();
-        if(mNoteBox.getParent() != null)
-            ((ViewGroup)mNoteBox.getParent()).removeView(mNoteBox); // <- fix
+        if(noteBox.getParent() != null)
+            ((ViewGroup)noteBox.getParent()).removeView(noteBox);
         alert.show();
-    }
-
-    private void initializePrefs(){
-        mPrefs.edit().putInt(DAY_COUNTER, 0).apply();
-        if (mPrefs.getString(MOODS,null) == null)
-            mPrefs.edit().putString(MOODS,"-1,-1,-1,-1,-1,-1,-1").apply();
-        if (mPrefs.getString(NOTES,null) == null)
-            mPrefs.edit().putString(NOTES,"no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note,;,;;,;;no note").apply();
     }
 }

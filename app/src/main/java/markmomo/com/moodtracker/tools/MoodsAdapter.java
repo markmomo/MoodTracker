@@ -4,18 +4,17 @@ package markmomo.com.moodtracker.tools;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
-import markmomo.com.moodtracker.models.SmileysFragment;
 
 /**
  * Created by markm On 20/03/2019.
  */
-public class SmileysAdapter extends FragmentPagerAdapter {
+public class MoodsAdapter extends FragmentPagerAdapter {
 
     private int[] mColors;
     public int mainActivityIconsColors;
 
 
-    public SmileysAdapter(FragmentManager mgr, int[] colors) {
+    public MoodsAdapter(FragmentManager mgr, int[] colors) {
         super(mgr);
         this.mColors = colors;
     }
@@ -30,6 +29,6 @@ public class SmileysAdapter extends FragmentPagerAdapter {
 
         mainActivityIconsColors = position;
 
-        return(SmileysFragment.newInstance(position, this.mColors[position]));
+        return(MoodsFragment.newInstance(position, this.mColors[position]));
     }
 }

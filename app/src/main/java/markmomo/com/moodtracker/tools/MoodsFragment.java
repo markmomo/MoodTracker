@@ -1,4 +1,4 @@
-package markmomo.com.moodtracker.models;
+package markmomo.com.moodtracker.tools;
 
 
 import android.os.Bundle;
@@ -16,7 +16,7 @@ import markmomo.com.moodtracker.R;
 /**
  * A simple {@link Fragment} subclass.
  */
-public class SmileysFragment extends Fragment {
+public class MoodsFragment extends Fragment {
 
     private static final String KEY_POSITION = "position";
     private static final String KEY_COLOR = "color";
@@ -26,11 +26,11 @@ public class SmileysFragment extends Fragment {
             R.drawable.smiley_super_happy};
 
 
-    public SmileysFragment() {
+    public MoodsFragment() {
     }
 
-    public static SmileysFragment newInstance(int position, int color) {
-        SmileysFragment frag = new SmileysFragment();
+    public static MoodsFragment newInstance(int position, int color) {
+        MoodsFragment frag = new MoodsFragment();
         Bundle args = new Bundle();
 
         args.putInt(KEY_POSITION, position);
