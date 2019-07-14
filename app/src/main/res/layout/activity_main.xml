@@ -11,13 +11,13 @@
         android:layout_height="match_parent"/>
 
     <ImageButton
-        android:id="@+id/act_main_note_icon"
+        android:id="@+id/act_main_comment_icon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="46dp"
         android:layout_marginEnd="355dp"
         android:layout_marginBottom="46dp"
-        android:onClick="noteIconIsClicked"
+        android:onClick="commentIconIsClicked"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"

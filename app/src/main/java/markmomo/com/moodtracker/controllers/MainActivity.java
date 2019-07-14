@@ -22,7 +22,7 @@ import markmomo.com.moodtracker.tools.AlarmReceiver;
 import markmomo.com.moodtracker.tools.MoodsAdapter;
 
 import static markmomo.com.moodtracker.models.Preferences.getCurrentMoodFromPrefs;
-import static markmomo.com.moodtracker.models.Preferences.nonNullHistoryPrefs;
+import static markmomo.com.moodtracker.models.Preferences.fillHistoryPrefsIfEmpty;
 import static markmomo.com.moodtracker.models.Preferences.printDataFromPrefs;
 import static markmomo.com.moodtracker.models.Preferences.putCurrentCommentInPrefs;
 import static markmomo.com.moodtracker.models.Preferences.putCurrentMoodInPrefs;
@@ -34,12 +34,13 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        mNoteIcon = findViewById(R.id.act_main_note_icon);
+
+        mNoteIcon = findViewById(R.id.act_main_comment_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
-        nonNullHistoryPrefs(this);
+
+        fillHistoryPrefsIfEmpty(this);
         this.configureViewPager();
         this.displayStartScreen();
         this.listeningViewPager();
@@ -48,8 +49,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStart() {
-
         super.onStart();
+
         this.configureViewPager();
         this.displayStartScreen();
         this.listeningViewPager();
@@ -57,8 +58,8 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onStop() {
-
         super.onStop();
+
         //deletePreferences(this);
     }
 
@@ -68,7 +69,7 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void noteIconIsClicked (View view) {
+    public void commentIconIsClicked (View view) {
 
         displayCommentBox(this);
     }
@@ -116,6 +117,7 @@ public class MainActivity extends AppCompatActivity {
         Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
         Calendar cal = Calendar.getInstance();
+
         cal.setTimeInMillis(System.currentTimeMillis());
         cal.set(Calendar.HOUR_OF_DAY, 8);
         cal.set(Calendar.MINUTE, 30);
@@ -131,6 +133,7 @@ public class MainActivity extends AppCompatActivity {
 
         final EditText commentBox = new EditText(context);
         AlertDialog.Builder alert = new AlertDialog.Builder(context);
+
         alert.setMessage("Cancel to keep last note\nOk to delete last note");
         alert.setTitle("comment");
         alert.setView(commentBox);

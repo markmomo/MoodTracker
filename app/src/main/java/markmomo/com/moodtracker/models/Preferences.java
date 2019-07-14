@@ -21,7 +21,6 @@ public class Preferences {
     private static SharedPreferences mPrefs;
 
     private static void declarePrefsService(Context context){
-
         mPrefs = context.getSharedPreferences("myPrefs", MODE_PRIVATE);
     }
 
@@ -29,38 +28,33 @@ public class Preferences {
     //---------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------
 
-    // obtiend l'humeur du jour enregistré dans les prefs
     public static String getCurrentMoodFromPrefs(Context context) {
-
         declarePrefsService(context);
+
         return mPrefs.getString(CURRENT_MOOD, "5");
     }
 
-    // enregistre l'humeur du jour dans les prefs
     public static void putCurrentMoodInPrefs(Context context, String currentMood) {
-
         declarePrefsService(context);
+
         mPrefs.edit().putString(CURRENT_MOOD, currentMood).apply();
     }
 
-    // obtiend la liste des humeurs enregistrés dans les prefs sous forme de String
     private static String getMoodsHistoryStringFromPrefs(Context context) {
-
         declarePrefsService(context);
+
         return mPrefs.getString(MOODS, "5");
     }
 
-    // enregistre l'historique des humeurs dans les prefs
     private static void putMoodsHistoryStringInPrefs(String string){
 
         mPrefs.edit().putString(MOODS,string).apply();
     }
 
-    // obtiend la liste des humeur enregistrés dans les prefs sous forme d'ArrayList<String>
     public static ArrayList<String> getMoodsHistoryArrayFromPrefs(Context context) {
-
         declarePrefsService(context);
         String moods = getMoodsHistoryStringFromPrefs(context);
+
         return new ArrayList<>(Arrays.asList(moods.split(",")));
     }
 
@@ -68,38 +62,33 @@ public class Preferences {
     //---------------------------------------------------------------------------------------------
     //---------------------------------------------------------------------------------------------
 
-    // obtiend la note du jour enregistré dans les prefs
     private static String getCurrentCommentFromPrefs(Context context) {
-
         declarePrefsService(context);
+
         return mPrefs.getString(CURRENT_COMMENT, "no comment");
     }
 
-    // enregistre le commentaire du jour dans les prefs
     public static void putCurrentCommentInPrefs(Context context, String currentNote) {
-
         declarePrefsService(context);
+
         mPrefs.edit().putString(CURRENT_COMMENT, currentNote).apply();
     }
 
-    // obtiend la liste des commentaires enregistrés dans les prefs sous forme de String
     private static String getCommentHistoryStringFromPrefs(Context context) {
-
         declarePrefsService(context);
+
         return mPrefs.getString(COMMENTS, "no comment");
     }
 
-    // enregistre l'historique des commentaires dans les prefs
     private static void putCommentsHistoryStringInPrefs(String string){
 
         mPrefs.edit().putString(COMMENTS,string).apply();
     }
 
-    // obtiend la liste des commentaires enregistrés dans les prefs sous forme d'ArrayList<String>
     public static ArrayList<String> getCommentsHistoryArrayFromPrefs(Context context) {
-
         declarePrefsService(context);
         String comments = getCommentHistoryStringFromPrefs(context);
+
         return new ArrayList<>(Arrays.asList(comments.split(",;,;;,;;")));
     }
 
@@ -108,9 +97,9 @@ public class Preferences {
     //---------------------------------------------------------------------------------------------
 
     // rempli les prefs MOODS et COMMENTS avec des valeurs par défaut si il n'existent pas.
-    public static void nonNullHistoryPrefs(Context context) {
-
+    public static void fillHistoryPrefsIfEmpty(Context context) {
         declarePrefsService(context);
+
         if (getMoodsHistoryArrayFromPrefs(context).size() == 1)
             putMoodsHistoryStringInPrefs("5,5,5,5,5,5,5");
         if (getCommentsHistoryArrayFromPrefs(context).size() == 1)
@@ -133,17 +122,17 @@ public class Preferences {
 
     // obtiend l'état de l'application enregistré dans les prefs (activité en cours)
     public static String getActivityStatusFromPrefs(Context context) {
-
         declarePrefsService(context);
         String appStatus;
         appStatus = mPrefs.getString(ACTIVITY_STATUS, "default");
+
         return appStatus;
     }
 
     // enregistre l'état de l'applicaiton dans les prefs (activité en cours)
     public static void putActivityStatusInPrefs(Context context, String appStatus) {
-
         declarePrefsService(context);
+
         mPrefs.edit().putString(ACTIVITY_STATUS, appStatus).apply();
     }
 
@@ -169,6 +158,7 @@ public class Preferences {
 
         String moodsHistoryResized;
         String commentsHistoryResized;
+
         while(moodsArray.size() > 7){
             moodsArray.remove(moodsArray.size()-1);
         }
@@ -183,6 +173,7 @@ public class Preferences {
         moodsHistoryResized += moodsArray.get(4) + ",";
         moodsHistoryResized += moodsArray.get(5) + ",";
         moodsHistoryResized += moodsArray.get(6);
+
         putMoodsHistoryStringInPrefs(moodsHistoryResized);
 
         commentsHistoryResized = commentsArray.get(0) + ",;,;;,;;";
@@ -192,12 +183,13 @@ public class Preferences {
         commentsHistoryResized += commentsArray.get(4) + ",;,;;,;;";
         commentsHistoryResized += commentsArray.get(5) + ",;,;;,;;";
         commentsHistoryResized += commentsArray.get(6);
+
         putCommentsHistoryStringInPrefs(commentsHistoryResized);
     }
 
     public static void deletePreferences (Context context){
-
         declarePrefsService(context);
+
         mPrefs.edit().clear().apply();
     }
 }
