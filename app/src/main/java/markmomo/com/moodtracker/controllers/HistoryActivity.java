@@ -15,9 +15,9 @@ import java.util.ArrayList;
 
 import markmomo.com.moodtracker.R;
 
-import static markmomo.com.moodtracker.models.Preferences.getMoodsFromPrefs;
-import static markmomo.com.moodtracker.models.Preferences.getNotesFromPrefs;
-import static markmomo.com.moodtracker.models.Preferences.putAppStatusOnPrefs;
+import static markmomo.com.moodtracker.models.Preferences.getMoodsHistoryArrayFromPrefs;
+import static markmomo.com.moodtracker.models.Preferences.getCommentsHistoryArrayFromPrefs;
+import static markmomo.com.moodtracker.models.Preferences.putActivityStatusInPrefs;
 
 public class HistoryActivity extends AppCompatActivity {
 
@@ -71,36 +71,42 @@ public class HistoryActivity extends AppCompatActivity {
     protected void onPause() {
         super.onPause();
 
-        putAppStatusOnPrefs(this,"inactive");
+        putActivityStatusInPrefs(this,"history inactive");
     }
 
     @Override
     protected void onStart() {
         super.onStart();
-
-        putAppStatusOnPrefs(this,"started");
+        putActivityStatusInPrefs(this,"history");
     }
+
+//    @Override
+//    protected void onResume() {
+//        super.onResume();
+//        Intent intent = new Intent(HistoryActivity.this,HistoryActivity.class);
+//        startActivity(intent);
+//    }
 
     public void button7IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(6), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(6), Toast.LENGTH_SHORT).show();
     }
     public void button6IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(5), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(5), Toast.LENGTH_SHORT).show();
     }
     public void button5IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(4), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(4), Toast.LENGTH_SHORT).show();
     }
     public void button4IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(3), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(3), Toast.LENGTH_SHORT).show();
     }
     public void button3IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(2), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(2), Toast.LENGTH_SHORT).show();
     }
     public void button2IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(1), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(1), Toast.LENGTH_SHORT).show();
     }
     public void button1IsClicked(View view){
-        Toast.makeText(this, getNotesFromPrefs(this).get(0), Toast.LENGTH_SHORT).show();
+        Toast.makeText(this, getCommentsHistoryArrayFromPrefs(this).get(0), Toast.LENGTH_SHORT).show();
     }
 
     private void displayHistory () {
@@ -110,14 +116,14 @@ public class HistoryActivity extends AppCompatActivity {
                 R.color.light_sage, R.color.banana_yellow, R.color.noMoodsGrey};
 
         for (int i = 0; i < 7; i++){
-            moodNumber = Integer.parseInt(getMoodsFromPrefs(this).get(i));
+            moodNumber = Integer.parseInt(getMoodsHistoryArrayFromPrefs(this).get(i));
             position = i;
             mColor = color [moodNumber];
             chooseWidthAndColor(moodNumber, mCstLayouts.get(position), mButtons.get(position));
         }
 
         //display management of history colors, sizes, and icons.
-//        ArrayList<String> moods = getMoodsFromPrefs(this);
+//        ArrayList<String> moods = getMoodsHistoryArrayFromPrefs(this);
 
 //        for (int i = 0; i < moods.size(); i++) {
 //            this.displayHistory(Integer.parseInt(moods.get(i)),i);
@@ -156,7 +162,7 @@ public class HistoryActivity extends AppCompatActivity {
     private void enableNoteIcons(){
         for (int i = 0; i < 7; i++){
 
-            if (getNotesFromPrefs(this).get(i).equals("no note"))
+            if (getCommentsHistoryArrayFromPrefs(this).get(i).equals("no comment"))
                 mButtons.get(i).setVisibility(View.GONE);
         }
     }

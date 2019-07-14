@@ -13,14 +13,15 @@ public class MoodsAdapter extends FragmentPagerAdapter {
     private int[] mColors;
     public int mainActivityIconsColors;
 
-
     public MoodsAdapter(FragmentManager mgr, int[] colors) {
+
         super(mgr);
         this.mColors = colors;
     }
 
     @Override
     public int getCount() {
+
         return(5);
     }
 
@@ -28,7 +29,6 @@ public class MoodsAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
 
         mainActivityIconsColors = position;
-
         return(MoodsFragment.newInstance(position, this.mColors[position]));
     }
 }

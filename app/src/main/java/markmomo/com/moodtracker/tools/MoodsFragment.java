@@ -25,18 +25,17 @@ public class MoodsFragment extends Fragment {
             R.drawable.smiley_normal, R.drawable.smiley_happy,
             R.drawable.smiley_super_happy};
 
-
     public MoodsFragment() {
     }
 
     public static MoodsFragment newInstance(int position, int color) {
+
         MoodsFragment frag = new MoodsFragment();
         Bundle args = new Bundle();
 
         args.putInt(KEY_POSITION, position);
         args.putInt(KEY_COLOR, color);
         frag.setArguments(args);
-
         return (frag);
     }
 
@@ -44,7 +43,6 @@ public class MoodsFragment extends Fragment {
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         View result = inflater.inflate(R.layout.fragment_smileys, container, false);
-
         LinearLayout rootView = result.findViewById(R.id.frag_smiley_root);
         ImageView imageView = result.findViewById(R.id.frag_smiley);
 
