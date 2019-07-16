@@ -17,7 +17,7 @@ import static markmomo.com.moodtracker.models.Preferences.resizePrefs;
 /**
  * Created by markm On 20/03/2019.
  */
-public class AlarmReceiver extends BroadcastReceiver {
+public class AlarmBroadcastReceiver extends BroadcastReceiver {
 
     @Override
     public void onReceive(Context context, Intent intent) {

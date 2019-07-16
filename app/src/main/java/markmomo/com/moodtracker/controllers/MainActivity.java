@@ -18,8 +18,9 @@ import android.widget.ImageButton;
 import java.util.Calendar;
 
 import markmomo.com.moodtracker.R;
-import markmomo.com.moodtracker.tools.AlarmReceiver;
-import markmomo.com.moodtracker.tools.MoodsAdapter;
+import markmomo.com.moodtracker.tools.AlarmBroadcastReceiver;
+import markmomo.com.moodtracker.tools.MoodsFragmentPagerAdapter;
+import markmomo.com.moodtracker.tools.VerticalViewPager;
 
 import static markmomo.com.moodtracker.models.Preferences.getCurrentMoodFromPrefs;
 import static markmomo.com.moodtracker.models.Preferences.fillHistoryPrefsIfEmpty;
@@ -30,7 +31,7 @@ import static markmomo.com.moodtracker.models.Preferences.putCurrentMoodInPrefs;
 public class MainActivity extends AppCompatActivity {
 
     private ImageButton mCommentIcon,mHistoryIcon;
-    private ViewPager mViewPager;
+    private VerticalViewPager mViewPager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class MainActivity extends AppCompatActivity {
     private void configureViewPager(){
 
         mViewPager = findViewById(R.id.act_main_view_pager);
-        MoodsAdapter moodsAdapter = new MoodsAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
+        MoodsFragmentPagerAdapter moodsAdapter = new MoodsFragmentPagerAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
         mViewPager.setAdapter(moodsAdapter);
         mCommentIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
         mHistoryIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
@@ -114,7 +115,7 @@ public class MainActivity extends AppCompatActivity {
         AlarmManager alarmMgr;
         PendingIntent alarmIntent;
         alarmMgr = (AlarmManager)getSystemService(Context.ALARM_SERVICE);
-        Intent intent = new Intent(MainActivity.this, AlarmReceiver.class);
+        Intent intent = new Intent(MainActivity.this, AlarmBroadcastReceiver.class);
         alarmIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, intent, 0);
         Calendar cal = Calendar.getInstance();
 

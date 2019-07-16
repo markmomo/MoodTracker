@@ -8,12 +8,12 @@ import android.support.v4.app.FragmentPagerAdapter;
 /**
  * Created by markm On 20/03/2019.
  */
-public class MoodsAdapter extends FragmentPagerAdapter {
+public class MoodsFragmentPagerAdapter extends FragmentPagerAdapter {
 
     private int[] mColors;
     public int mainActivityIconsColors;
 
-    public MoodsAdapter(FragmentManager mgr, int[] colors) {
+    public MoodsFragmentPagerAdapter(FragmentManager mgr, int[] colors) {
 
         super(mgr);
         this.mColors = colors;
