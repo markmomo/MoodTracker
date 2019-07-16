@@ -29,7 +29,7 @@ import static markmomo.com.moodtracker.models.Preferences.putCurrentMoodInPrefs;
 
 public class MainActivity extends AppCompatActivity {
 
-    private ImageButton mNoteIcon,mHistoryIcon;
+    private ImageButton mCommentIcon,mHistoryIcon;
     private ViewPager mViewPager;
 
     @Override
@@ -37,7 +37,7 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mNoteIcon = findViewById(R.id.act_main_comment_icon);
+        mCommentIcon = findViewById(R.id.act_main_comment_icon);
         mHistoryIcon = findViewById(R.id.act_main_history_icon);
 
         fillHistoryPrefsIfEmpty(this);
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity {
         mViewPager = findViewById(R.id.act_main_view_pager);
         MoodsAdapter moodsAdapter = new MoodsAdapter(getSupportFragmentManager(), getResources().getIntArray(R.array.viewPagerColors));
         mViewPager.setAdapter(moodsAdapter);
-        mNoteIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
+        mCommentIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
         mHistoryIcon.setBackgroundColor(moodsAdapter.mainActivityIconsColors);
     }
 

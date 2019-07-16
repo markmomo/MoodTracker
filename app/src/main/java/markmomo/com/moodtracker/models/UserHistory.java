@@ -10,7 +10,7 @@ public class UserHistory {
     private int mCurrentMood;
     private String mCurrentComment;
     private ArrayList<Integer> moodsHistory;
-    private ArrayList<String> commentHistory;
+    private ArrayList<String> commentsHistory;
 
     public int getCurrentMood() {
         return mCurrentMood;
@@ -25,7 +25,7 @@ public class UserHistory {
     }
 
     public ArrayList<String> getCommentHistory() {
-        return commentHistory;
+        return commentsHistory;
     }
 
     public void setCurrentMood(int currentMood) {
@@ -40,10 +40,7 @@ public class UserHistory {
         this.moodsHistory = moodsHistory;
     }
 
-    public void setCommentHistory(ArrayList<String> commentHistory) {
-        this.commentHistory = commentHistory;
+    public void setCommentHistory(ArrayList<String> commentsHistory) {
+        this.commentsHistory = commentsHistory;
     }
 }
-
-
-
