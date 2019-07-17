@@ -21,7 +21,7 @@ public class MoodsFragment extends Fragment {
     private static final String KEY_POSITION = "position";
     private static final String KEY_COLOR = "color";
     private @DrawableRes
-    int smileys[] = new int[]{R.drawable.smiley_sad, R.drawable.smiley_disappointed,
+    int[] smileys = new int[]{R.drawable.smiley_sad, R.drawable.smiley_disappointed,
             R.drawable.smiley_normal, R.drawable.smiley_happy,
             R.drawable.smiley_super_happy};
 
@@ -42,19 +42,22 @@ public class MoodsFragment extends Fragment {
     @Override
     public View onCreateView(@Nullable LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
-        View result = inflater.inflate(R.layout.fragment_smileys, container, false);
-        LinearLayout rootView = result.findViewById(R.id.frag_smiley_root);
-        ImageView imageView = result.findViewById(R.id.frag_smiley);
+        if (inflater != null) {
+            View result = inflater.inflate(R.layout.fragment_smileys, container, false);
+            LinearLayout rootView = result.findViewById(R.id.frag_smiley_root);
+            ImageView imageView = result.findViewById(R.id.frag_smiley);
 
-        int position = getArguments().getInt(KEY_POSITION, -1);
-        int color = getArguments().getInt(KEY_COLOR, -1);
+            int position = getArguments().getInt(KEY_POSITION, -1);
+            int color = getArguments().getInt(KEY_COLOR, -1);
 
-        rootView.setBackgroundColor(color);
+            rootView.setBackgroundColor(color);
 
-        for (int i = 0; i < position + 1; i++) {
-            imageView.setImageResource(smileys[i]);
-        }
+            for (int i = 0; i < position + 1; i++) {
+                imageView.setImageResource(smileys[i]);
+            }
             Log.e(getClass().getSimpleName(), "onCreateView called for fragment number " + position);
             return result;
+
+        }return null;
     }
 }

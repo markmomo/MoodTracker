@@ -1,14 +1,14 @@
 package markmomo.com.moodtracker.tools;
 
-/**
- * Created by markm On 16/07/2019.
- */
-
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.View;
+
+/**
+ * Created by markm On 16/07/2019.
+ */
 
 public class VerticalViewPager extends ViewPager {
 
@@ -45,9 +45,15 @@ public class VerticalViewPager extends ViewPager {
 
     @Override
     public boolean onTouchEvent(MotionEvent ev) {
+        this.performClick();
         final boolean toHandle = super.onTouchEvent(flipXY(ev));
         flipXY(ev);
         return toHandle;
+    }
+
+    @Override
+    public boolean performClick() {
+        return super.performClick();
     }
 
     private MotionEvent flipXY(MotionEvent ev) {

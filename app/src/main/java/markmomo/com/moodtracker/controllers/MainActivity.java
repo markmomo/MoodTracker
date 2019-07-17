@@ -5,6 +5,7 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.support.v4.view.ViewPager;
@@ -32,6 +33,7 @@ public class MainActivity extends AppCompatActivity {
 
     private ImageButton mCommentIcon,mHistoryIcon;
     private VerticalViewPager mViewPager;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -102,6 +104,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onPageSelected(int position) {
 
+                playSoundsOnMoodsSelected();
                 putCurrentMoodInPrefs(getApplicationContext(),mViewPager.getCurrentItem()+"");
             }
             @Override
@@ -157,5 +160,18 @@ public class MainActivity extends AppCompatActivity {
         if(commentBox.getParent() != null)
             ((ViewGroup)commentBox.getParent()).removeView(commentBox);
         alert.show();
+    }
+
+    private void playSoundsOnMoodsSelected(){
+
+        int[] mp = {R.raw.disappointed, R.raw.sad, R.raw.normal, R.raw.happy, R.raw.super_happy };
+
+        final MediaPlayer mp0 = MediaPlayer.create(this, mp[mViewPager.getCurrentItem()]);
+        mp0.start();
+        mp0.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+            public void onCompletion(MediaPlayer mp0) {
+                mp0.release();
+            }
+        });
     }
 }
